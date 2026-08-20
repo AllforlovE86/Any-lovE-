@@ -527,7 +527,7 @@ function showToast(msg){
   setTimeout(()=> t.classList.remove('show'), 1800);
 }
 
-/* ---------- BGM (자동재생 없음, 버튼으로만 재생) ---------- */
+/* ---------- BGM (첫 스크롤/터치 시 자동재생 시도) ---------- */
 const bgmAudio = document.getElementById('bgmAudio');
 const bgmBtn = document.getElementById('bgmBtn');
 
@@ -543,6 +543,14 @@ function toggleBgm(){
     setPlayingState(false);
   }
 }
+
+function tryAutoStartBgm(){
+  if(!bgmAudio.paused) return;
+  bgmAudio.play().then(()=> setPlayingState(true)).catch(()=>{});
+}
+['touchstart','click','scroll','wheel'].forEach(evt=>{
+  window.addEventListener(evt, tryAutoStartBgm, { once:true, passive:true });
+});
 
 /* ---------- capture deterrents ---------- */
 document.addEventListener('contextmenu', e => e.preventDefault());
